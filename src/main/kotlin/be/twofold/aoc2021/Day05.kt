@@ -11,16 +11,19 @@ fun part2(lines: List<Line>): Int {
 private fun solve(lines: List<Line>, useDiagonal: Boolean): Int {
     val horizontal = lines
         .filter { it.y1 == it.y2 }
-        .flatMap { horizontal(it) }
+        .flatMap { range(it.x1, it.x2).map { x -> Point(x, it.y1) } }
 
     val vertical = lines
         .filter { it.x1 == it.x2 }
-        .flatMap { vertical(it) }
+        .flatMap { range(it.y1, it.y2).map { y -> Point(it.x1, y) } }
 
     val allPoints = if (useDiagonal) {
         val diagonal = lines
             .filter { it.x1 - it.y1 == it.x2 - it.y2 || it.x1 + it.y1 == it.x2 + it.y2 }
-            .flatMap { diagonal(it) }
+            .flatMap { (x1, y1, x2, y2) ->
+                range(x1, x2).zip(range(y1, y2))
+                    .map { Point(it.first, it.second) }
+            }
 
         horizontal + vertical + diagonal
     } else {
@@ -40,22 +43,6 @@ fun main() {
 
     println("Part 1: ${part1(input)}")
     println("Part 2: ${part2(input)}")
-}
-
-fun horizontal(line: Line): List<Point> {
-    val xRange = range(line.x1, line.x2)
-    return xRange.map { Point(it, line.y1) }
-}
-
-fun vertical(line: Line): List<Point> {
-    val yRange = range(line.y1, line.y2)
-    return yRange.map { Point(line.x1, it) }
-}
-
-fun diagonal(line: Line): List<Point> {
-    val xRange = range(line.x1, line.x2)
-    val yRange = range(line.y1, line.y2)
-    return xRange.zip(yRange).map { Point(it.first, it.second) }
 }
 
 fun range(a: Int, b: Int) = if (a < b) a..b else a downTo b
