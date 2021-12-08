@@ -14,50 +14,31 @@ object Day08 {
 
     private fun decode(s: String): Int {
         val split = s.split('|').map { it.trim() }
-        val patterns = split[0].split(' ')
+        val patterns = split[0].split(' ').map { it.toSet() }
 
-        val one = patterns.single { it.length == 2 }.toSet()
-        val cf = one.first()
-        val fc = one.last()
+        val one = patterns.single { it.size == 2 }
+        val four = patterns.single { it.size == 4 }
+        val seven = patterns.single { it.size == 3 }
+        val eight = patterns.single { it.size == 7 }
 
-        val four = patterns.single { it.length == 4 }.toSet()
-        val bd = (four - one).first()
-        val db = (four - one).last()
+        val fourDiff = four - one
+        val three = patterns.single { it.size == 5 && it.containsAll(one) }
+        val five = patterns.single { it.size == 5 && it.containsAll(fourDiff) }
+        val two = patterns.single { it.size == 5 && it != three && it != five }
 
-        val seven = patterns.single { it.length == 3 }.toSet()
-        val a = (seven - one).single()
+        val nine = patterns.single { it.size == 6 && it.containsAll(four) }
+        val six = patterns.single { it.size == 6 && it != nine && it.containsAll(fourDiff) }
+        val zero = patterns.single { it.size == 6 && it != nine && it != six }
 
-        val zero = patterns.single { it.length == 6 && (!it.contains(bd) || !it.contains(db)) }.toSet()
-        val b = if (zero.contains(bd)) bd else db
-        val d = if (!zero.contains(bd)) bd else db
+        val numbers = mapOf(
+            zero to 0, one to 1, two to 2, three to 3, four to 4,
+            five to 5, six to 6, seven to 7, eight to 8, nine to 9
+        )
 
-        val six = patterns.single { it.length == 6 && (!it.contains(cf) || !it.contains(fc)) }.toSet()
-        val c = if (!six.contains(cf)) cf else fc
-        val f = if (six.contains(cf)) cf else fc
-
-        val nine = patterns.single { it.length == 6 && it.toSet() != zero && it.toSet() != six }.toSet()
-        val e = ("abcdefg".toSet() - nine.toSet()).single()
-        val g = ("abcdefg".toSet() - setOf(a, b, c, d, e, f)).single()
-
-        // println(arrayOf(a, b, c, d, e, f, g).joinToString(" "))
-
-        val two = patterns.single { it.length == 5 && it.toSet() == setOf(a, c, d, e, g) }.toSet()
-        val three = patterns.single { it.length == 5 && it.toSet() == setOf(a, c, d, f, g) }.toSet()
-        val five = patterns.single { it.length == 5 && it.toSet() == setOf(a, b, d, f, g) }.toSet()
-        val eight = patterns.single { it.length == 7 }.toSet()
-
-        val numbers = listOf(zero, one, two, three, four, five, six, seven, eight, nine)
-
-        var result = 0
-        for (output in split[1].split(' ').map { it.toSet() }) {
-            for ((index, number) in numbers.withIndex()) {
-                if (output == number) {
-                    result = result * 10 + index
-                }
-            }
-        }
-
-        return result
+        return split[1]
+            .split(' ')
+            .map { numbers[it.toSet()]!! }
+            .reduce { a, i -> a * 10 + i }
     }
 }
 
