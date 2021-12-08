@@ -38,7 +38,7 @@ object Day05 {
             .count()
     }
 
-    fun range(a: Int, b: Int) = if (a < b) a..b else a downTo b
+    private fun range(a: Int, b: Int) = if (a < b) a..b else a downTo b
 
     fun line(s: String): Line {
         return s.split(',', ' ')

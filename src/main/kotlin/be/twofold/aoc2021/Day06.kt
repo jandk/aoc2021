@@ -9,7 +9,7 @@ object Day06 {
         return solve(input, 256)
     }
 
-    fun solve(input: List<Int>, days: Int): Long {
+    private fun solve(input: List<Int>, days: Int): Long {
         val groups = LongArray(9)
         input.forEach { groups[it]++ }
 
